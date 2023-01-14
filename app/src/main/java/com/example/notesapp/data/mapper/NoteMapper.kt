@@ -2,6 +2,7 @@ package com.example.notesapp.data.mapper
 
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.notesapp.data.remote.dto.NotesResponse
 import com.example.notesapp.domain.models.Note

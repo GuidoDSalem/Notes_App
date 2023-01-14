@@ -21,14 +21,14 @@ import com.example.notesapp.domain.models.NoteColor
 
 @Composable
 fun ColorItem(
-        noteColor: NoteColor,
-        width: Float = 35.dp.value,
         modifier: Modifier,
+        noteColor: NoteColor,
+        width: Float = 35.dp.value
 
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center){
         Canvas(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
 
         ){
 
@@ -59,7 +59,8 @@ fun ColorItem(
 fun PreviewColorItem() {
     ColorItem(
             noteColor = NoteColor.CyanColor,
-            modifier = Modifier.size(400.dp).background(Color(0x22FF55FF))
+            modifier = Modifier.size(400.dp).background(Color(0x22FF55FF)),
+
     )
 
 }

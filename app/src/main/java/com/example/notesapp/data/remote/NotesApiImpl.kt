@@ -23,7 +23,6 @@ class NotesApiImpl(
         return catchApiCall(
                 emptyList<NotesResponse>()
         ){
-            //client.get(HttpRoutes.NOTES).body<List<NotesResponse>>()
             val httpResponse: HttpResponse = client.get(HttpRoutes.NOTES)
             val notes: List<NotesResponse> = httpResponse.body()
             return notes
@@ -34,8 +33,9 @@ class NotesApiImpl(
         val path: String = HttpRoutes.noteByIdPath(color)
         val httpResponse: HttpResponse = client.get(path)
         val response: SimpleRespond<List<NotesResponse>> = httpResponse.body()
-        TODO("Implementar que pasa si algo salem Mal")
         return response.data
+        TODO("Implementar que pasa si algo salem Mal")
+
     }
 
     override suspend fun getById(id: Int): NotesResponse {
@@ -110,11 +110,13 @@ class NotesApiImpl(
 
         val path: String = HttpRoutes.NOTES
         val httpResponse: HttpResponse = client.post(path){
+            contentType(ContentType.Application.Json)
             setBody(newNote)
         }
         val result: SimpleRespond<String> = httpResponse.body()
-        TODO("Implementar que pasa si algo sale mal")
         return result.success
+
+        TODO("Implementar que pasa si algo sale mal")
 
     }
 

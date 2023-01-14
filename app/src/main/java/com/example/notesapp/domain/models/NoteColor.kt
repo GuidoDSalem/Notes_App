@@ -15,7 +15,7 @@ sealed class NoteColor(val hex: Long,val color:Color) {
     object GrayColor : NoteColor(0xFFEEEEEE,color = Color(0xFFEEEEEE))
     object YellowColor : NoteColor(0xFFFFF59D,color = Color(0xFFFFF59D))
     object CyanColor : NoteColor(0xFF80DEEA,color = Color(0xFF80DEEA))
-    object RedColor : NoteColor(0xFF000070,color = Color(0xFF000070))
+    object RedColor : NoteColor(0xFF000070,color = Color(0xFFFA8282))
     object NullColor: NoteColor(0,Color(0x00000000))
 
     companion object {
@@ -27,7 +27,7 @@ sealed class NoteColor(val hex: Long,val color:Color) {
                 0xFFEEEEEE -> NoteColor.GrayColor
                 0xFFFFF59D -> NoteColor.YellowColor
                 0xFF80DEEA -> NoteColor.CyanColor
-                0xFF000070 -> NoteColor.RedColor
+                0xFFFA8282 -> NoteColor.RedColor
                 else -> NoteColor.BlueColor
             }
         }
@@ -40,7 +40,7 @@ sealed class NoteColor(val hex: Long,val color:Color) {
                 is GrayColor -> 0xFFEEEEEE
                 is YellowColor -> 0xFFFFF59D
                 is CyanColor -> 0xFF80DEEA
-                is RedColor -> 0xFF000070
+                is RedColor -> 0xFFFA8282
                 is NullColor -> 0x00000000
                 else -> 0xFF7FD7FF
             }

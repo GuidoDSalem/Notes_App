@@ -4,7 +4,7 @@ import android.graphics.Color
 import com.example.notesapp.domain.models.NoteColor
 
 data class EditState(
-        val title: String = "<title>",
-        val content: String = "<content>",
+        val title: String = "",
+        val content: String = "",
         val color: NoteColor = NoteColor.NullColor
 )

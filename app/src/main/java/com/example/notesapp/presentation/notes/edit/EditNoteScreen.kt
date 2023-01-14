@@ -20,7 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.notesapp.domain.Screen
+import com.example.notesapp.presentation.notes.composables.EditableNote
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
@@ -33,15 +36,14 @@ fun EditScreen(
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val currentNote by viewModel.stateFlow.collectAsState()
+    val state by viewModel.stateFlow.collectAsState()
 
     LaunchedEffect(key1 = true){
-        viewModel.setNote(noteId)
+        Log.d("ASA1",state.title)
+        async { viewModel.loadNote(noteId) }.await()
+        Log.d("ASA1",state.title)
     }
 
-
-//    val currentTitle by viewModel.stateTitle.collectAsState()
-//    val currentContent by viewModel.stateContent.collectAsState()
 
     Column(
             modifier = Modifier.fillMaxSize(),
@@ -55,9 +57,8 @@ fun EditScreen(
         Box(modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(15.dp))
-            .background(currentNote.color.color)
             .clickable {
-                viewModel.setNote(noteId)
+                viewModel.loadNote(noteId)
             },
             contentAlignment = Alignment.CenterEnd,
 
@@ -68,23 +69,20 @@ fun EditScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.End
             ) {
-                BasicTextField(
-                        modifier = Modifier.align(Alignment.End),
-                        value = currentNote.title.trim(),
-                        textStyle =  MaterialTheme.typography.h3,
-                        onValueChange = { title ->
+
+                EditableNote(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = state.title,
+                        onTitleValueChange = { title ->
                             viewModel.updateTitle(title)
-                        }
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                BasicTextField(
-                        modifier = Modifier.align(Alignment.End),
-                        value = currentNote.content,
-                        textStyle =  MaterialTheme.typography.h5,
-                        onValueChange = { content ->
+                        },
+                        content = state.content,
+                        onContentValueChange = { content ->
                             viewModel.updateContent(content)
+                        },
+                        color = state.color,
+                        onColorClick =  { color ->
+                            viewModel.updateColor(color)
                         }
                 )
             }
@@ -105,15 +103,10 @@ fun EditScreen(
 
             IconButton(onClick = {
                 viewModel.updateNote(noteId,navController,scaffoldState)
-                Log.d("ASA","Llegue 3")
                 scope.launch {
                     viewModel.editEventFlow.collect { event ->
-                        Log.d("ASA","Llegue 4")
-
                         when(event){
                             is EditEvent.SuccessEdit -> {
-                                Log.d("ASA","Llegue 5")
-
                                 scaffoldState.snackbarHostState.showSnackbar(
                                         event.message,
                                         duration = SnackbarDuration.Long

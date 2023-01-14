@@ -6,8 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,19 +52,31 @@ fun SimpleNote(
         content: String,
         noteColor: NoteColor,
         time: ZonedDateTime,
-        onClick: () -> Unit
+        onClick: () -> Unit,
+        onDelete: () -> Unit
 ) {
 
 
     Box(
             modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(color = noteColor.color).clickable {
-                                                           onClick()
-            },
+                .clip(RoundedCornerShape(16.dp))
+                .background(color = noteColor.color)
+                .clickable {
+                    onClick()
+                },
             contentAlignment = Alignment.CenterEnd,
 
             ){
+        IconButton(
+                modifier = Modifier.align(Alignment.CenterStart),
+                onClick = {
+            onDelete()
+        }) {
+            Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Delete"
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,9 +130,11 @@ fun PreviewSimpleNote() {
             title = "Title",
             content = "This is the ",
             noteColor = NoteColor.BlueColor,
-            time = ZonedDateTime.now()
+            time = ZonedDateTime.now(),
+            onDelete = {},
+            onClick = {}
 
-        ){}
+        )
     }
 
 }

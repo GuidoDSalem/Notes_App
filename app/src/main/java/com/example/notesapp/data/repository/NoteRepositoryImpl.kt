@@ -23,13 +23,12 @@ class NoteRepositoryImpl(
         }
     }
 
-    override suspend fun deleteNote(id: Int) {
-        val result = api.deleteNote(id)
-        if(result){
-            println("Se elimino Exitosamente la Nota")
-        }else{
-            println("No se pudo borrar la Nota :(")
-        }
+    override suspend fun deleteNote(id: Int): Result<String> {
+        val result: Boolean = api.deleteNote(id)
+        return if(result)Result.success("Se Elimino Exitosamente la Nota")
+        else Result.failure(
+                throw Exception("No se pudo Eliminar la Nota :(")
+        )
     }
 
     override suspend fun updateNote(note: Note): Result<String> {
@@ -38,29 +37,38 @@ class NoteRepositoryImpl(
         Log.d("ASA","Llegue 2")
         Log.d("ASA",result.toString())
 
-        if(result){
-
-            return  Result.success("Se Guardo Exitosamente la Nota")
-        }else{
-            return Result.failure(
+        return try{
+            Result.success("Se Guardo Exitosamente la Nota")
+        } catch (e: Exception){
+            e.printStackTrace()
+            Result.failure(
                     throw Exception("No se pudo guardar la Nota :(")
             )
-
         }
     }
 
     override suspend fun getNote(id: Int): Note {
-        val result: NotesResponse = api.getById(id)
-        return result.toNote()
+        val noteResponse: NotesResponse = api.getById(id)
+        val note: Note = noteResponse.toNote()
+        return note
     }
 
-    override suspend fun createNote(note: Note) {
-        val result: Boolean = api.createNote(note)
-        if(result){
-            println("Se creo exitosamente la Nota")
-        }else{
-            println("No se pudo crear la Nota :(")
-        }
+    override suspend fun createNote(note: Note): Result<String> {
+        val apiResult: Boolean = api.createNote(note)
+        return if(apiResult)Result.success("Se Guardo Exitosamente la Nota")
+            else Result.failure(
+                throw Exception("No se pudo guardar la Nota :(")
+        )
+
+
+        /*return try{
+            val apiResult: Boolean = api.createNote(note)
+            Result.success("Se Guardo Exitosamente la Nota")
+        } catch(e: Exception){
+            e.printStackTrace()
+            Result.failure(
+                    throw Exception("No se pudo guardar la Nota :("))
+        }*/
 
     }
 

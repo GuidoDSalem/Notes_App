@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import com.example.notesapp.domain.NoteRepository
 import com.example.notesapp.domain.Screen
 import com.example.notesapp.domain.models.Note
+import com.example.notesapp.domain.models.NoteColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -27,12 +28,6 @@ class EditNoteViewModel @Inject constructor(
     private var _stateFlow = MutableStateFlow(EditState())
     val stateFlow = _stateFlow.asStateFlow()
 
-    private var _stateTitle = MutableStateFlow("")
-    val stateTitle = _stateTitle.asStateFlow()
-
-    private var _stateContent = MutableStateFlow("")
-    val stateContent = _stateContent.asStateFlow()
-
     private val _editEvent = Channel<EditEvent>()
     val editEventFlow = _editEvent.receiveAsFlow()
 
@@ -45,6 +40,12 @@ class EditNoteViewModel @Inject constructor(
     fun updateContent(content: String){
         _stateFlow.value = stateFlow.value.copy(
                 content = content
+        )
+    }
+
+    fun updateColor(color: NoteColor){
+        _stateFlow.value = stateFlow.value.copy(
+                color = color
         )
     }
 
@@ -77,37 +78,38 @@ class EditNoteViewModel @Inject constructor(
                 id = id,
                 date = ZonedDateTime.now()
         )
-        viewModelScope.launch{
+        viewModelScope.launch(Dispatchers.IO){
             val result: Result<String>  = noteRepository.updateNote(newNote)
-            result.onSuccess { message ->
-                _editEvent.send(EditEvent.SuccessEdit(message))
-                //scaffoldState.snackbarHostState.showSnackbar(message)
-                navController.navigate(Screen.NotesScreen.route)
+            withContext(Dispatchers.Main){
+                result.onSuccess { message ->
+                    navController.navigate(Screen.NotesScreen.route)
+                    Log.d("ASA3","Deveria haber navegado")
+                    _editEvent.send(EditEvent.SuccessEdit(message))
+                }
+                result.onFailure {
+                    val message: String = it?.message!!
+                    _editEvent.send(EditEvent.SuccessEdit(message))
+                }
             }
-            result.onFailure {
-                val message: String = it?.message!!
-                _editEvent.send(EditEvent.SuccessEdit(message))
-            }
+
         }
     }
 
-    fun setNote(id: Int){
+    fun loadNote(id: Int){
         viewModelScope.launch(Dispatchers.IO) {
-            val note: Note = noteRepository.getNote(id)!!
+            val note: Note =
+                withContext(Dispatchers.Default) { noteRepository.getNote(id)!! }
 
-
+            Log.d("ASA-4",note.content)
 
             withContext(Dispatchers.Main){
-                _stateFlow.emit(_stateFlow.value.copy(
+                _stateFlow.value = stateFlow.value.copy(
                         title = note.title,
                         content = note.content,
-                        color = note.color)
+                        color = note.color
                 )
-                _stateTitle.value = note.title
-                _stateContent.value = note.content
-                Log.d("ASA",stateTitle.value)
-                Log.d("ASA",stateContent.value)
             }
+            Log.d("ASA-2",stateFlow.value.content)
         }
 
     }

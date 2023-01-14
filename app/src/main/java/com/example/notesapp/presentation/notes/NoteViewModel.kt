@@ -59,4 +59,18 @@ class NoteViewModel @Inject constructor(
         }
     }
 
+    fun deleteNote(id: Int){
+        viewModelScope.launch {
+            val result: Result<String> = noteRepository.deleteNote(id)
+            Log.d("ASA-dalete","${result.isSuccess}")
+            result.onSuccess {
+                getAllNotes()
+            }
+            result.onFailure {
+                it.printStackTrace()
+
+            }
+        }
+    }
+
 }

@@ -16,7 +16,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notesapp.domain.Screen
@@ -49,52 +51,21 @@ fun CreateScreen(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
     ) {
+        Text(text = "Create Note", style = MaterialTheme.typography.h1, /*fontWeight = FontWeight(4)*/)
         EditableNote(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(NoteColor.BlueColor.color),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp)),
                 title = state.title,
-                onTitleValueChange = viewModel.updateTitle(),
+                onTitleValueChange = { newTitle ->
+                    viewModel.updateTitle(newTitle) },
                 content = state.content,
-                onContentValueChange = viewModel.updateTitle(),
-                showTitleHint = true,
-                showContentHint = true,
-                onColorClick = {
-
-                }
+                onContentValueChange = { newContent ->
+                    viewModel.updateContent(newContent) },
+                color = state.color,
+                onColorClick = viewModel::updateColor
         )
 
-        /*Box(modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(15.dp))
-            .background(state.color.color),
-            contentAlignment = Alignment.CenterEnd,
-            ){
-            Column(
-                    Modifier.padding(vertical = 10.dp),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.End
-            ) {
-                BasicTextField(
-                        modifier = Modifier.align(Alignment.End),
-                        value = currentNote.title,
-                        textStyle =  MaterialTheme.typography.h3,
-                        onValueChange = { title ->
-                            viewModel.updateTitle(title)
-                        }
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                BasicTextField(
-                        modifier = Modifier.align(Alignment.End),
-                        value = currentNote.content,
-                        textStyle =  MaterialTheme.typography.h5,
-                        onValueChange = { content ->
-                            viewModel.updateContent(content)
-                        }
-                )
-            }
-
-        }*/
         Row (
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -109,7 +80,7 @@ fun CreateScreen(
             Spacer(Modifier.weight(1f))
 
             IconButton(onClick = {
-                navController.navigate(Screen.NotesScreen.route)
+                viewModel.createNote(navController)
             }) {
                 Icon(
                         Icons.Default.Check,

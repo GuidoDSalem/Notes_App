@@ -56,10 +56,14 @@ fun NoteScreen(
                             noteColor = note.color,//LocalNoteColor.current.BlueColor//Color(0)
                             // note
                             // .color//LocalNoteColor.current.BlueColor
-                            time = note.date
-                    ){
-                        navController.navigate(Screen.EditNoteScreen.withArg(note))
-                    }
+                            time = note.date,
+                            onDelete = {
+                                viewModel.deleteNote(note.id!!)
+                            },
+                            onClick = {
+                                navController.navigate(Screen.EditNoteScreen.withArg(note))
+                            }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
